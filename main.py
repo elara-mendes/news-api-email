@@ -6,22 +6,19 @@ from textblob import TextBlob
 import os
 
 NEWS_API = os.getenv("NEWS_API")
+TOPIC = "trans, diversity"
+LANGUAGE = "en"
+DATE = "2025-03-06" # YYYY-MM-DD / From date till today
 
-url = f"https://newsapi.org/v2/everything?q=trans&language=pt&from=2025-03-03&sortBy=publishedAt&apiKey={NEWS_API}"
+url = f"https://newsapi.org/v2/everything?q={TOPIC}&language={LANGUAGE}&from={DATE}&sortBy=publishedAt&apiKey={NEWS_API}"
 request_info = requests.get(url)
 content = request_info.json()
 
-
-# for article in itertools.islice(content["articles"], 10):
-#     article_title = article["title"]
-#     article_description = article["description"]
-#     article_link = article["url"]
-#     article_autor = article["author"]
-#     message += f"Título: {article_title}\nAutor: {article_autor}\n{article_description}\n{article_link}\n\n"
-#     print(article_title, article_description)
-
 def translation_content(text):
-    translated = GoogleTranslator(source="pt", target='en').translate(text)
+    if LANGUAGE.lower() == "pt":
+        translated = GoogleTranslator(source="pt", target='en').translate(text)
+    else:
+        translated = GoogleTranslator(source=LANGUAGE, target='en').translate(text)
     return translated
 
 
@@ -32,7 +29,7 @@ def text_sentiment():
         article_description = article["description"]
         article_link = article["url"]
         if article_title is not None:
-            translated_text = translation_content(article_title)
+            translated_text = translation_content(article_description)
             content_text = TextBlob(translated_text)
             content_polarity = content_text.polarity
             if content_polarity > 0:
@@ -53,10 +50,7 @@ for articles in positive_news:
     {articles["link"]}\n
 """
 
-# \nAutor: {article_autor}\n{article_description}\n{article_link}\n\n"
-print(message)
-print(text_sentiment())
-print(type(text_sentiment()))
+print(message) # Preview
 
 if message is not None:
     email_send(message)
