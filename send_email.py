@@ -2,7 +2,7 @@ import smtplib, ssl
 import os
 
 YOUR_EMAIL = "elaradomingos@gmail.com"
-APP_PASSWORD = os.getenv("GMAIL_PASSWORD")
+APP_PASSWORD = os.getenv("GMAIL_PASSWORD") # Your Gmail Password
 
 
 def email_send(message):

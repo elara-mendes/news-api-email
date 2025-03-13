@@ -5,14 +5,15 @@ from send_email import email_send
 from textblob import TextBlob
 import os
 
-NEWS_API = os.getenv("NEWS_API")
+NEWS_API = os.getenv("NEWS_API") # Your API key
 TOPIC = "trans, diversity"
 LANGUAGE = "en"
-DATE = "2025-03-06" # YYYY-MM-DD / From date till today
+DATE = "2025-03-06"  # YYYY-MM-DD / From date till today
 
 url = f"https://newsapi.org/v2/everything?q={TOPIC}&language={LANGUAGE}&from={DATE}&sortBy=publishedAt&apiKey={NEWS_API}"
 request_info = requests.get(url)
 content = request_info.json()
+
 
 def translation_content(text):
     if LANGUAGE.lower() == "pt":
@@ -40,6 +41,7 @@ def text_sentiment():
                 })
     return sentiments
 
+
 positive_news = text_sentiment()
 
 message = ""
@@ -50,7 +52,7 @@ for articles in positive_news:
     {articles["link"]}\n
 """
 
-print(message) # Preview
+print(message)  # Preview
 
 if message is not None:
     email_send(message)
