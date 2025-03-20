@@ -6,8 +6,8 @@ from textblob import TextBlob
 import os
 
 NEWS_API = os.getenv("NEWS_API") # Your API key
-TOPIC = "trans, diversity"
-LANGUAGE = "en"
+TOPIC = "lgbt, trans"
+LANGUAGE = "pt"
 DATE = "2025-03-06"  # YYYY-MM-DD / From date till today
 
 url = f"https://newsapi.org/v2/everything?q={TOPIC}&language={LANGUAGE}&from={DATE}&sortBy=publishedAt&apiKey={NEWS_API}"
@@ -25,19 +25,20 @@ def translation_content(text):
 
 def text_sentiment():
     sentiments = []
-    for article in itertools.islice(content["articles"], 10):
+    for article in itertools.islice(content["articles"], 15):
         article_title = article["title"]
         article_description = article["description"]
         article_link = article["url"]
         if article_title is not None:
             translated_text = translation_content(article_description)
             content_text = TextBlob(translated_text)
-            content_polarity = content_text.polarity
-            if content_polarity > 0:
+            content_polarity = content_text.sentiment.polarity
+            if content_polarity > 0.10:
                 sentiments.append({
                     "title": article_title,
                     "description": article_description,
-                    "link": article_link
+                    "link": article_link,
+                    "polarity": round(content_polarity, 2)
                 })
     return sentiments
 
@@ -50,6 +51,7 @@ for articles in positive_news:
     Título: {articles["title"]}\n
     {articles["description"]}\n
     {articles["link"]}\n
+    Polaridade: {articles["polarity"]}\n
 """
 
 print(message)  # Preview
